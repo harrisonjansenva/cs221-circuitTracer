@@ -107,8 +107,8 @@ public class CircuitTracer {
         }
         switch (args[1]) {
             case "-c":
-                System.out.println("There are " + bestPaths.size() + " solutions.");
-                System.out.println("Shortest Path: " + bestPaths.getFirst().pathLength());
+//                System.out.println("There are " + bestPaths.size() + " solutions.");
+//                System.out.println("Shortest Path: " + bestPaths.getFirst().pathLength());
                 for (TraceState states : bestPaths) {
                     System.out.println(states.toString());
                 }
