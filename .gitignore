@@ -3,3 +3,5 @@
 /.idea
 ## Not sure what this file does?
 circuitTracer.iml
+## ignore the out folder
+/out

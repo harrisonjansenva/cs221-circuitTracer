@@ -51,45 +51,61 @@ public class CircuitBoard {
     public CircuitBoard(String filename) throws FileNotFoundException {
         Scanner fileScan = new Scanner(new File(filename));
         String rowsLine = fileScan.nextLine().trim();
-        if (rowsLine.length() != 2) {
-            throw new InvalidFileFormatException("Invalid number of rows in file " + filename);
+        String[] dimensions = rowsLine.split("\\s+");
+
+        if (dimensions.length != 2) {
+            throw new InvalidFileFormatException(" Invalid number of dimensions in file " + filename);
         }
-        ROWS = Integer.parseInt(rowsLine.charAt(0) + "");
-        COLS = Integer.parseInt(rowsLine.charAt(0) + "");
+        try {
+            ROWS = Integer.parseInt(dimensions[0]);
+            COLS = Integer.parseInt(dimensions[1]);
+        } catch (NumberFormatException e) {
+            throw new InvalidFileFormatException(" Invalid number of dimensions in file " + filename);
+        }
+
+
         board = new char[ROWS][COLS];
         int row = 0;
         while (fileScan.hasNextLine()) {
             String line = fileScan.nextLine().trim();
-            if (row > ROWS) {
-                throw new InvalidFileFormatException("Invalid number of rows in file " + filename);
+            if (row >= ROWS) {
+                throw new InvalidFileFormatException(filename + " has too many rows.");
             }
-            if (line.length() != COLS) {
-                throw new InvalidFileFormatException("Invalid number of columns in file " + filename);
+            String[] columns = line.split("\\s+");
+            if (columns.length != COLS) {
+                throw new InvalidFileFormatException(" Invalid number of columns in file " + filename);
             }
             for (int col = 0; col < COLS; col++) {
-                if (ALLOWED_CHARS.indexOf(line.charAt(col)) == -1) {
-                    throw new InvalidFileFormatException(filename + "has invalid characters.");
+                char currChar = columns[col].charAt(0);
+                if (ALLOWED_CHARS.indexOf(currChar) == -1) {
+                    throw new InvalidFileFormatException(filename + " has invalid characters.");
                 }
-                if (startingPoint != null || endingPoint != null) {
-                    throw new InvalidFileFormatException(filename + "has multiple starting or ending points.");
-                }
-                if (line.charAt(col) == 1) {
+                if (currChar == '1') {
+                    if (startingPoint != null) {
+                        throw new InvalidFileFormatException(filename + " has multiple starting points.");
+                    }
                     startingPoint = new Point(row, col);
                 }
-                if (line.charAt(col) == 2) {
+                if (currChar == '2') {
+                    if (endingPoint != null) {
+                        throw new InvalidFileFormatException(filename + " has multiple ending points.");
+                    }
                     endingPoint = new Point(row, col);
                 }
-                board[row][col] = line.charAt(col);
+                board[row][col] = currChar;
+
             }
             row++;
-
         }
-
-
-        fileScan.close();
+        if (row < ROWS) {
+            throw new InvalidFileFormatException(filename + " has too few rows.");
+        }
         if (startingPoint == null || endingPoint == null) {
-            throw new InvalidFileFormatException(filename + "has invalid starting or ending points.");
+            throw new InvalidFileFormatException(filename + " has invalid starting or ending points.");
         }
+        fileScan.close();
+
+
     }
 
     /**
