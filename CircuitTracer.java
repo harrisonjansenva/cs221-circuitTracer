@@ -8,6 +8,7 @@ import java.util.ArrayList;
  * a GUI according to options specified via command-line arguments.
  *
  * @author mvail
+ * @author harrisonjansenvanbeek
  */
 public class CircuitTracer {
 
@@ -46,9 +47,9 @@ public class CircuitTracer {
             return; //exit the constructor immediately
         }
         Storage<TraceState> stateStore;
-        ArrayList<TraceState> bestPaths = new ArrayList<TraceState>();
+        ArrayList<TraceState> bestPaths = new ArrayList<TraceState>();  //initialize storage of new TraceState and bestPaths
 
-        switch (args[0]) {
+        switch (args[0]) {  //check for storage implementation
             case "-q":
                 stateStore = new Storage<TraceState>(Storage.DataStructure.queue);
                 break;
@@ -63,7 +64,7 @@ public class CircuitTracer {
         try {
             CircuitBoard board = new CircuitBoard(args[2]);
             Point startingPoint = board.getStartingPoint();
-            for (int i = -1; i <= 1; i++) {
+            for (int i = -1; i <= 1; i++) { //create initial TraceStates
                 if (board.isOpen(startingPoint.x + i, startingPoint.y)) {
                     TraceState newState = new TraceState(board, startingPoint.x + i, startingPoint.y);
                     stateStore.store(newState);
@@ -76,7 +77,7 @@ public class CircuitTracer {
             while (!stateStore.isEmpty()) {
                 TraceState currentEvaluated = stateStore.retrieve();
 
-                if (currentEvaluated.isSolution()) {
+                if (currentEvaluated.isSolution()) {        //check for solution and add to bestpaths
                     if (bestPaths.isEmpty() || currentEvaluated.pathLength() == bestPaths.getFirst().pathLength()) {
                         bestPaths.add(currentEvaluated);
                     } else if (currentEvaluated.pathLength() < bestPaths.getFirst().pathLength()) {
@@ -85,7 +86,7 @@ public class CircuitTracer {
                     }
                 } else {
 
-                    for (int i = -1; i < 2; i++) {
+                    for (int i = -1; i < 2; i++) {  //else generate all new TraceStates needed
                         if (i == 0) continue;
                         int newX = currentEvaluated.getRow() + i;
                         int newY = currentEvaluated.getCol() + i;
@@ -105,7 +106,7 @@ public class CircuitTracer {
             System.err.println(" An error Occurred! Try again. " +  e + e.getMessage());
 
         }
-        switch (args[1]) {
+        switch (args[1]) {  //check for output method (need to implement GUI)
             case "-c":
 //                System.out.println("There are " + bestPaths.size() + " solutions.");
 //                System.out.println("Shortest Path: " + bestPaths.getFirst().pathLength());
@@ -119,7 +120,6 @@ public class CircuitTracer {
                 throw new UnsupportedOperationException("GUI mode not yet supported.");
             default:
                 printUsage();
-                return;
         }
 
     }

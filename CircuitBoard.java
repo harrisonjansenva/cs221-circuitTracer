@@ -7,6 +7,7 @@ import java.util.Scanner;
  * Represents a 2D circuit board as read from an input file.
  *
  * @author mvail
+ * @author harrisonjansenvanbeek
  */
 public class CircuitBoard {
     /**
@@ -54,7 +55,7 @@ public class CircuitBoard {
         String[] dimensions = rowsLine.split("\\s+");
 
         if (dimensions.length != 2) {
-            throw new InvalidFileFormatException(" Invalid number of dimensions in file " + filename);
+            throw new InvalidFileFormatException(" Invalid number of dimensions in file " + filename);  //ensure no extra characters in the row with dimensions.
         }
         try {
             ROWS = Integer.parseInt(dimensions[0]);
@@ -68,25 +69,25 @@ public class CircuitBoard {
         int row = 0;
         while (fileScan.hasNextLine()) {
             String line = fileScan.nextLine().trim();
-            if (row >= ROWS) {
+            if (row >= ROWS) {      //check to make sure there aren't extra rows in the file
                 throw new InvalidFileFormatException(filename + " has too many rows.");
             }
             String[] columns = line.split("\\s+");
-            if (columns.length != COLS) {
+            if (columns.length != COLS) {   //check to make sure each row has the appropriate number of columns
                 throw new InvalidFileFormatException(" Invalid number of columns in file " + filename);
             }
             for (int col = 0; col < COLS; col++) {
                 char currChar = columns[col].charAt(0);
-                if (ALLOWED_CHARS.indexOf(currChar) == -1) {
+                if (ALLOWED_CHARS.indexOf(currChar) == -1) {    //check to ensure no invalid characters in the file.
                     throw new InvalidFileFormatException(filename + " has invalid characters.");
                 }
-                if (currChar == '1') {
+                if (currChar == '1') {  //check for a starting point while making sure there aren't multiple.
                     if (startingPoint != null) {
                         throw new InvalidFileFormatException(filename + " has multiple starting points.");
                     }
                     startingPoint = new Point(row, col);
                 }
-                if (currChar == '2') {
+                if (currChar == '2') {  //check for ending point and making sure there aren't multiple.
                     if (endingPoint != null) {
                         throw new InvalidFileFormatException(filename + " has multiple ending points.");
                     }
@@ -97,10 +98,10 @@ public class CircuitBoard {
             }
             row++;
         }
-        if (row < ROWS) {
+        if (row < ROWS) {       //if we have empty rows, there are too few rows in the file.
             throw new InvalidFileFormatException(filename + " has too few rows.");
         }
-        if (startingPoint == null || endingPoint == null) {
+        if (startingPoint == null || endingPoint == null) { //have to make sure we have a starting and ending point.
             throw new InvalidFileFormatException(filename + " has invalid starting or ending points.");
         }
         fileScan.close();
